@@ -19,31 +19,43 @@ app.use(function (err, req, res, next) {
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true
 });
-const menuSchema = new mongoose.Schema({
-    item: String,
-    price: Number
+
+const coordsSchema = new mongoose.Schema({
+    altitudeAccuracy: Number,
+    accuracy: Number,
+    heading: Number,
+    longitude: Number,
+    altitude: Number,
+    latitude: Number,
+    speed: Number
 })
 
-const restaurantsSchema = new mongoose.Schema({
-    name: String,
-    level: Number,
-    menuItems: [menuSchema]
+const locationSchema = new mongoose.Schema({
+    coords: [coordsSchema],
+    timestamp: Number
+})
+
+const sessionsSchema = new mongoose.Schema({
+    location1: [locationSchema],
+    location2: [locationSchema],
+    
 })
 
 const userSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
-    seatNumber: Number,
-    order: [menuSchema]
+    userName: String,
+    passWord: String,
+    email: String,
 })
 
-const Restaurants = mongoose.model('restaurants', restaurantsSchema)
+const Sessions = mongoose.model('sessions', sessionsSchema)
 const Users = mongoose.model('users', userSchema)
 
-app.get('/restaurants', (req,res) => {
-    Restaurants.find({}, function(err, result){
+app.get('/sessions', (req,res) => {
+    Sessions.find({}, function(err, result){
         console.log(err, result)
-    }).then(restaurant => res.status(201).json({restaurant}))
+    }).then(session => res.status(201).json({session}))
   })
 
 
@@ -57,8 +69,8 @@ app.post('/users', (req, res) =>{
     Users.create(req.body).then(user => res.status(201).json({user}))
 })
 
-app.post('/restaurants', (req, res) =>{
-    Restaurants.create(req.body).then(restaurant => res.status(201).json({restaurant}))
+app.post('/sessions', (req, res) =>{
+    Sessions.create(req.body).then(session => res.status(201).json({session}))
 })
   
 app.use((err,req,res,next)=>{
@@ -75,3 +87,39 @@ app.use((req,res,next)=>{
 app.listen(port , () => {
     console.log(`listening on ${port} yaherrrd`)
 })
+
+
+const placeObject = (yourlocation, mylocation, isMiles,) =>{ 
+      
+    function toRad(x) {
+        return x * Math.PI / 180;
+      }
+     
+      var lon1 = yourlocation.lng;
+      var lat1 = yourlocation.lat;
+     
+      var lon2 = mylocation.lng;
+      var lat2 = mylocation.lat;
+     
+      var R = 6371; // km
+     
+      var x1 = lat2 - lat1;
+      var dLat = toRad(x1);
+      var x2 = lon2 - lon1;
+      var dLon = toRad(x2)
+      var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      var d = R * c;
+    
+     
+      if(isMiles) d /= 1.60934;
+      x1 = x1 * 1609.344
+      x2 = x2 * 1609.344 
+      d = d * 1609.344
+     
+      return [x1, x2, d]
+  }
+
+  console.log(placeObject({lat:39.75751913899073,lng:-105.00692868825644},{lat:39.75747517814582755,lng:-105.00690361273335},true))
