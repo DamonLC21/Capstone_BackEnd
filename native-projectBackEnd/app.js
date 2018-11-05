@@ -31,13 +31,13 @@ const coordsSchema = new mongoose.Schema({
 })
 
 const locationSchema = new mongoose.Schema({
-    coords: [coordsSchema],
+    coords: coordsSchema,
     timestamp: Number
 })
 
 const sessionsSchema = new mongoose.Schema({
-    location1: [locationSchema],
-    location2: [locationSchema],
+    location1: locationSchema,
+    location2: locationSchema,
     
 })
 
@@ -57,7 +57,6 @@ app.get('/sessions', (req,res) => {
         console.log(err, result)
     }).then(session => res.status(201).json({session}))
   })
-
 
 app.get('/users', (req,res) => {
     Users.find({}, function(err, result){
