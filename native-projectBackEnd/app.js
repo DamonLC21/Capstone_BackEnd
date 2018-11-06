@@ -81,6 +81,11 @@ app.post('/users', (req, res) =>{
 app.post('/sessions', (req, res) =>{
     Sessions.create(req.body).then(session => res.status(201).json({session}))
 })
+
+app.delete('/sessions/:name', (req, res) => {
+    Sessions.deleteOne({ sessionName: req.params.id })
+        .then(deletedSession => res.status(201).json({ deletedSession }))
+})
   
 app.use((err,req,res,next)=>{
     res.status(err.status || 500).json({error:err})
