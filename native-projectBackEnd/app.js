@@ -70,7 +70,7 @@ app.post('/sessions/:id', (req,res) => {
    Sessions.findOneAndUpdate({ _id: req.params.id}, req.body, options, function (err, result) {
         console.log(err)
     })
-    .then(location2 => res.status(201).json({ location2 }))
+    .then(session=> res.status(201).json({ session }))
 })
 
 
