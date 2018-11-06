@@ -83,7 +83,7 @@ app.post('/sessions', (req, res) =>{
 })
 
 app.delete('/sessions/:name', (req, res) => {
-    Sessions.deleteOne({ sessionName: req.params.id })
+    Sessions.deleteOne({ sessionName: req.params.name })
         .then(deletedSession => res.status(201).json({ deletedSession }))
 })
   
