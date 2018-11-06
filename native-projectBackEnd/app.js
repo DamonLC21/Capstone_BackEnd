@@ -65,6 +65,15 @@ app.get('/users', (req,res) => {
     }).then(users => res.status(201).json({users}))
   })
 
+app.post('/sessions/:id', (req,res) => {
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true };
+   Sessions.findOneAndUpdate({ _id: req.params.id}, req.body, options, function (err, result) {
+        console.log(err)
+    })
+    .then(location2 => res.status(201).json({ location2 }))
+})
+
+
 app.post('/users', (req, res) =>{
     Users.create(req.body).then(user => res.status(201).json({user}))
 })
